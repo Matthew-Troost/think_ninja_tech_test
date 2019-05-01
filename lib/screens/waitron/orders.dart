@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:think_ninja_tech_test/utils/widgets.dart';
-import 'package:think_ninja_tech_test/screens/waitron/order.dart';
 
-class Orders extends StatelessWidget {
+class Orders extends StatefulWidget {
+  final void Function(int index) navFunction;
+
+  const Orders({Key key, @required this.navFunction}) : super(key: key);
 
   @override
+  _OrdersState createState() => _OrdersState();
+}
+
+class _OrdersState extends State<Orders> {
+  @override
   Widget build(BuildContext context) {
-    return Button(text: "New Order", function: () {
-          Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Order()),
+    return RaisedButton(
+      onPressed: () => widget.navFunction(3),
+      child: Text("New Order"),
     );
-    },);
   }
 }
