@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:think_ninja_tech_test/utils/widgets.dart';
 
 class Orders extends StatefulWidget {
   final void Function(int index) navFunction;

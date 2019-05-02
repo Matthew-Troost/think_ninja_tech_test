@@ -6,9 +6,7 @@ import 'package:think_ninja_tech_test/screens/waitron/order.dart';
 
 class Home extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    return _HomeState();
-  }
+  State<StatefulWidget> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
