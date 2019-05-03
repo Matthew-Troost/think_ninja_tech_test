@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "537714738349",
+    "firebase_url": "https://thinkninjas-tech-test.firebaseio.com",
+    "project_id": "thinkninjas-tech-test",
+    "storage_bucket": "thinkninjas-tech-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537714738349:android:e40e19449cff5ae5",
+        "android_client_info": {
+          "package_name": "com.example.think_ninja_tech_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "537714738349-c9nmuc7t4o8jfagakg5vfjg7q7tv4jlh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAljukgkVmbYaZJIsRdnKgaaKE9yWEsQlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537714738349-c9nmuc7t4o8jfagakg5vfjg7q7tv4jlh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "537714738349-moiodo7cfsov2jf4pnehnnokktffh4ar.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.thinkNinjaTechTest"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
