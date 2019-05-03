@@ -24,18 +24,28 @@ class _OrderState extends State<Order> {
   }
 }
 
-class OrderForm extends StatefulWidget {
-  @override
-  _FormState createState() => _FormState();
+class OrderItem {
+  String itemName = '';
+  String notes = '';
+  int quantity = 0;
 }
 
-class _FormState extends State<OrderForm> {
+class OrderForm extends StatefulWidget {
+  @override
+  _OrderFormState createState() => _OrderFormState();
+}
+
+class _OrderFormState extends State<OrderForm> {
   final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
+
+  OrderItem orderitem = new OrderItem();
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
+      autovalidate: _autoValidate,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -46,10 +56,16 @@ class _FormState extends State<OrderForm> {
                 return 'Please enter the menu item name';
               }
             },
+            onSaved: (String value) {
+              this.orderitem.itemName = value;
+            },
           ),
           TextFormField(
             decoration: InputDecoration(labelText: 'Notes'),
             maxLines: 5,
+            onSaved: (String value) {
+              this.orderitem.notes = value;
+            },
           ),
           TextFormField(
             decoration: InputDecoration(labelText: 'Quantity'),
@@ -59,17 +75,23 @@ class _FormState extends State<OrderForm> {
                 return 'Please enter a quantity';
               }
             },
+            onSaved: (String value) {
+              this.orderitem.quantity = int.parse(value);
+            },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: RaisedButton(
               onPressed: () {
-                // Validate will return true if the form is valid, or false if
-                // the form is invalid.
                 if (_formKey.currentState.validate()) {
-                  // If the form is valid, we want to show a Snackbar
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
+                  _formKey.currentState.save();
+
+                  Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text("Adding to order...")));
+                } else {
+                  setState(() {
+                    _autoValidate = true;
+                  });
                 }
               },
               child: Text('Add To Order'),
