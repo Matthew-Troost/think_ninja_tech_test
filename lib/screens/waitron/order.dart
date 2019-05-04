@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Order extends StatefulWidget {
-  final void Function(int index) navFunction;
+  final String orderId;
 
-  const Order({Key key, @required this.navFunction}) : super(key: key);
+  const Order({Key key, @required this.orderId}) : super(key: key);
 
   @override
   _OrderState createState() => _OrderState();
@@ -13,15 +13,16 @@ class Order extends StatefulWidget {
 class _OrderState extends State<Order> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        RaisedButton(
-          onPressed: () => widget.navFunction(1),
-          child: Text("Back"),
-        ),
-        OrderItemForm(),
-
-      ],
+    return Scaffold(
+      appBar: AppBar(title: Text("Order APP")),
+      body: Column(
+        children: <Widget>[
+          OrderItemForm(),
+          new Expanded(
+            child: OrderItems(orderId: widget.orderId),
+          )
+        ],
+      ),
     );
   }
 }
@@ -90,6 +91,10 @@ class _OrderItemFormState extends State<OrderItemForm> {
 
                   Scaffold.of(context).showSnackBar(
                       SnackBar(content: Text("Adding to order...")));
+
+                  Firestore.instance.runTransaction((transaction) async {
+
+                  });
                 } else {
                   setState(() {
                     _autoValidate = true;
@@ -105,28 +110,46 @@ class _OrderItemFormState extends State<OrderItemForm> {
   }
 }
 
-class OrderItems extends StatefulWidget{
-    @override
-  _OrderItemsState createState() => _OrderItemsState();
-}
+class OrderItems extends StatelessWidget {
+  final String orderId;
 
-class _OrderItemsState extends State<OrderItems>{
+  const OrderItems({Key key, @required this.orderId}) : super(key: key);
 
- @override
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Firestore.instance.collection("orderItems").snapshots(),
-      builder: (context, snapshot){
-          if(!snapshot.hasData) return const Text("Loading...");
+      stream: Firestore.instance
+          .collection("orders")
+          .document(this.orderId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Text("Loading...");
 
-          return ListView.builder(
-            itemExtent: 80.00,
-            itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) => 
-              Text(snapshot.data.documents[index]),
-          );
+        return ListView.builder(
+          itemCount: snapshot.data["orderItems"].length,
+          itemBuilder: (context, index) =>
+              _buildListItem(context, snapshot.data["orderItems"][index]),
+        );
       },
     );
   }
 
+  Widget _buildListItem(BuildContext context, Map orderItem) {
+    return ListTile(
+      title: Row(
+        children: [
+          Expanded(
+            child: Text(orderItem["name"],
+                style: Theme.of(context).textTheme.headline),
+          ),
+          Container(
+            decoration: const BoxDecoration(color: Color(0xffddddff)),
+            padding: const EdgeInsets.all(10.0),
+            child: Text(orderItem["quantity"].toString(),
+                style: Theme.of(context).textTheme.display1),
+          )
+        ],
+      ),
+    );
+  }
 }

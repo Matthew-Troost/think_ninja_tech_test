@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:think_ninja_tech_test/screens/customer.dart';
 import 'package:think_ninja_tech_test/screens/kitchen.dart';
 import 'package:think_ninja_tech_test/screens/waitron/orders.dart';
-import 'package:think_ninja_tech_test/screens/waitron/order.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,9 +14,8 @@ class _HomeState extends State<Home> {
   widgetList() {
     return [
       Customer(),
-      Orders(navFunction: updateWidgetInView),
-      Kitchen(),
-      Order(navFunction: updateWidgetInView)
+      Orders(),
+      Kitchen()
     ];
   }
 
