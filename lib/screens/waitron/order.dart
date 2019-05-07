@@ -11,41 +11,31 @@ class Order extends StatefulWidget {
 }
 
 class _OrderState extends State<Order> {
+  final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
+
+  OrderItem orderitem = new OrderItem();
+
+  DocumentReference fetchOrder() {
+    return Firestore.instance.collection("orders").document(widget.orderId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Order APP")),
       body: Column(
         children: <Widget>[
-          OrderItemForm(),
+          orderForm(context),
           new Expanded(
-            child: OrderItems(orderId: widget.orderId),
+            child: orderItems(context),
           )
         ],
       ),
     );
   }
-}
 
-class OrderItem {
-  String itemName = '';
-  String notes = '';
-  int quantity = 0;
-}
-
-class OrderItemForm extends StatefulWidget {
-  @override
-  _OrderItemFormState createState() => _OrderItemFormState();
-}
-
-class _OrderItemFormState extends State<OrderItemForm> {
-  final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
-
-  OrderItem orderitem = new OrderItem();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget orderForm(BuildContext context) {
     return Form(
       key: _formKey,
       autovalidate: _autoValidate,
@@ -89,12 +79,25 @@ class _OrderItemFormState extends State<OrderItemForm> {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
 
-                  Scaffold.of(context).showSnackBar(
-                      SnackBar(content: Text("Adding to order...")));
+                  //Scaffold.of(context).showSnackBar(
+                  //   SnackBar(content: Text("Adding to order...")));
 
                   Firestore.instance.runTransaction((transaction) async {
+                    var document = await transaction.get(fetchOrder());
 
+                    var items = new List.from(document.data['orderItems']);
+                    items.add({
+                      "name": this.orderitem.itemName,
+                      "notes": this.orderitem.notes,
+                      "quantity": this.orderitem.quantity
+                    });
+
+                    await transaction
+                        .update(document.reference, {'orderItems': items});
                   });
+
+                  //clear fields
+                  _formKey.currentState.reset();
                 } else {
                   setState(() {
                     _autoValidate = true;
@@ -108,20 +111,10 @@ class _OrderItemFormState extends State<OrderItemForm> {
       ),
     );
   }
-}
 
-class OrderItems extends StatelessWidget {
-  final String orderId;
-
-  const OrderItems({Key key, @required this.orderId}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget orderItems(BuildContext context) {
     return StreamBuilder(
-      stream: Firestore.instance
-          .collection("orders")
-          .document(this.orderId)
-          .snapshots(),
+      stream: fetchOrder().snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Text("Loading...");
 
@@ -152,4 +145,10 @@ class OrderItems extends StatelessWidget {
       ),
     );
   }
+}
+
+class OrderItem {
+  String itemName = '';
+  String notes = '';
+  int quantity = 0;
 }
